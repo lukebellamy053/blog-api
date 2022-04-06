@@ -1,6 +1,6 @@
-import {Injectable} from "@nestjs/common";
+import {BadRequestException, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {SubscriberEntity} from "../entity/subscriber.entity";
+import {NewSubscriber, SubscriberEntity} from "../entity/subscriber.entity";
 import {Repository} from "typeorm";
 
 @Injectable()
@@ -9,15 +9,30 @@ export class SubscribersService {
     @InjectRepository(SubscriberEntity)
     private usersRepository: Repository<SubscriberEntity>;
 
-    newSubscriber(subscriber: Partial<SubscriberEntity>) {
+    async verifyEmail(email: string, verificationCode: string) {
+        const subscriber = await this.usersRepository.findOne({email});
+        if (!subscriber || subscriber.verificationCode !== verificationCode) {
+            // For security reasons, don't reveal if the user does not exist
+            throw new BadRequestException("The verification code provided does not match");
+        }
+        subscriber.emailVerified = true;
+        subscriber.verificationCode = null;
+        await this.usersRepository.save([subscriber]);
+    }
+
+    newSubscriber(subscriber: NewSubscriber) {
         const sub = new SubscriberEntity();
         Object.assign(sub, subscriber);
+        const currentTimestamp = Date.now().toString();
+        sub.verificationCode = currentTimestamp.substring(currentTimestamp.length - 6);
         return this.usersRepository.save([sub]);
     }
 
-    async getSubscribers() {
-        await this.newSubscriber({firstName: "Luke", lastName: "Bellamy", email: "test@test.com"})
+    async getSubscribers(): Promise<SubscriberEntity[]> {
         return this.usersRepository.find()
     }
 
+    async removeSubscriber(email: string) {
+        await this.usersRepository.delete({email});
+    }
 }

@@ -1,21 +1,29 @@
 import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from 'typeorm';
 
+export type NewSubscriber = Omit<SubscriberEntity, "subscriptionTime" | "id" | "verificationCode" | "emailVerified">
+
 @Entity()
 export class SubscriberEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    firstName: string;
+    name: string;
+
+    @Column({length: 255, unique: true})
+    email: string;
 
     @Column()
-    lastName: string;
+    frequency: string;
 
-    @Column({length: 255})
-    email: string;
+    @Column({length: 3})
+    country: string;
 
     @Column({default: false})
     emailVerified: boolean;
+
+    @Column({length: 6, nullable: true})
+    verificationCode: string;
 
     @CreateDateColumn()
     subscriptionTime: Date;
