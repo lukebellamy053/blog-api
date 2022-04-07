@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    env:
+      DB_DATABASE: blog_db
+      DB_USER: root
+      DB_PASSWORD: 'root'
+      DB_HOST: localhost
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.0
+
+      - name: Cancel previous runs of this workflow
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Install Deps
+        run: yarn --frozen-lockfile
+
+      - name: Unit Tests
+        run: yarn test
+
+      - run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE wordpress_test;' -uroot -proot
+          mysql -e 'SHOW DATABASES;' -uroot -proot
+
+      - name: E2E Tests
+        run: yarn test:e2e
+

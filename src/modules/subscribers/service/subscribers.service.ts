@@ -20,12 +20,14 @@ export class SubscribersService {
         await this.usersRepository.save([subscriber]);
     }
 
-    newSubscriber(subscriber: NewSubscriber) {
+    async newSubscriber(subscriber: NewSubscriber) {
         const sub = new SubscriberEntity();
         Object.assign(sub, subscriber);
         const currentTimestamp = Date.now().toString();
         sub.verificationCode = currentTimestamp.substring(currentTimestamp.length - 6);
-        return this.usersRepository.save([sub]);
+        await this.usersRepository.insert([sub]);
+
+        return this.usersRepository.findOne({email: sub.email})
     }
 
     async getSubscribers(): Promise<SubscriberEntity[]> {
