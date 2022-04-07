@@ -2,27 +2,21 @@ import 'dotenv/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { Frequency, SubscriberEntity } from '../src/modules/subscribers';
 import { Repository } from 'typeorm';
 import {
   CREATE_SUBSCRIBER_BAD_REQUESTS,
   CREATE_SUBSCRIBER_HAPPY_PATH,
-} from './__stubs__/create-subscriber.stub';
-import { VERIFY_EMAIL_BAD_REQUESTS } from './__stubs__/verify-email.stub';
+  VERIFY_EMAIL_BAD_REQUESTS,
+} from './__stubs__';
+import { getApplication } from './base';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let repo: Repository<SubscriberEntity>;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
-    await app.init();
+    app = await getApplication();
     repo = await app.resolve('SubscriberEntityRepository');
   });
 
