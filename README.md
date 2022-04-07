@@ -10,10 +10,10 @@ Run yarn to install the dependencies
 
 run docker compose up -d to start the database in the background
 
-run yarn dev to run the application
+run yarn start:dev to run the application
 
 run yarn test to run the unit tests
 
 run yarn test:e2e to run the e2e tests (DB must be running)
 
-Swagger can be found at /swagger-ui
+Swagger can be found at /swagger-ui 

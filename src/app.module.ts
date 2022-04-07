@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SubscribersModule } from './modules/subscribers/subscribers.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SubscriberEntity } from './modules/subscribers/entity/subscriber.entity';
+import { SubscribersHttpModule } from './modules/subscribers-http';
 
 @Module({
   imports: [
@@ -12,10 +11,10 @@ import { SubscriberEntity } from './modules/subscribers/entity/subscriber.entity
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [SubscriberEntity],
+      autoLoadEntities: true,
       synchronize: true,
     }),
-    SubscribersModule,
+    SubscribersHttpModule,
   ],
 })
 export class AppModule {}

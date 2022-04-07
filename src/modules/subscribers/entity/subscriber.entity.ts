@@ -50,8 +50,6 @@ export class SubscriberEntity {
   @Column({ length: 3 })
   country: string;
 
-  @ApiHideProperty()
-  @Exclude()
   @Column({ default: false })
   emailVerified: boolean;
 

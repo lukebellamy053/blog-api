@@ -1,6 +1,6 @@
-import { Frequency, NewSubscriber } from '../entity/subscriber.entity';
 import { IsEmail, IsEnum, Length } from 'class-validator';
 import { NonEmptyString } from './common';
+import { Frequency, NewSubscriber } from '../external';
 
 export class NewSubscriberRequest implements NewSubscriber {
   @NonEmptyString({

@@ -6,7 +6,7 @@ import {
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { QueryFailedError } from 'typeorm';
 
 @Injectable()

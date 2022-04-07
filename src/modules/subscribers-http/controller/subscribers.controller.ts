@@ -10,31 +10,32 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import { SubscribersService } from '../service/subscribers.service';
-import { NewSubscriber, SubscriberEntity } from '../entity/subscriber.entity';
 import { NewSubscriberRequest } from '../request/NewSubscriberRequest';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { VerifyEmailRequest } from '../request/VerifyEmailRequest';
 import { SQLErrorsInterceptor } from '../interceptors/SQLErrors.interceptor';
+import {
+  DeleteUserSwagger,
+  GetSubscribersSwagger,
+  NewSubscriberSwagger,
+  ValidateEmailSwagger,
+} from './swagger.decorators';
+import { SubscribersService } from '../../subscribers/service/subscribers.service';
+import { SubscriberEntity } from '../external';
 
 @Controller({ path: '/subscribers' })
+@UseInterceptors(SQLErrorsInterceptor, ClassSerializerInterceptor)
 export class SubscribersController {
   @Inject()
   private subscriberService: SubscribersService;
 
   @Get()
-  @ApiOperation({ summary: 'Get registered subscribers' })
-  @ApiResponse({
-    type: [SubscriberEntity],
-  })
-  @UseInterceptors(ClassSerializerInterceptor)
+  @GetSubscribersSwagger
   getSubscribers(): Promise<SubscriberEntity[]> {
     return this.subscriberService.getSubscribers();
   }
 
   @Post()
-  @ApiOperation({ summary: 'Register a new subscriber' })
-  @UseInterceptors(SQLErrorsInterceptor)
+  @NewSubscriberSwagger
   newSubscriber(
     @Body() newSubscriber: NewSubscriberRequest,
   ): Promise<SubscriberEntity> {
@@ -42,13 +43,13 @@ export class SubscribersController {
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Validate a users email' })
+  @ValidateEmailSwagger
   verifyEmail(@Body() { email, code }: VerifyEmailRequest): Promise<void> {
     return this.subscriberService.verifyEmail(email, code);
   }
 
   @Delete('/:email')
-  @ApiOperation({ summary: 'Unsubscribe a user' })
+  @DeleteUserSwagger
   removeSubscriber(@Param('email') email: string): Promise<void> {
     return this.subscriberService.removeSubscriber(email);
   }

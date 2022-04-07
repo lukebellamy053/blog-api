@@ -3,10 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import {
-  Frequency,
-  SubscriberEntity,
-} from '../src/modules/subscribers/entity/subscriber.entity';
+import { Frequency, SubscriberEntity } from '../src/modules/subscribers';
 import { Repository } from 'typeorm';
 import {
   CREATE_SUBSCRIBER_BAD_REQUESTS,
