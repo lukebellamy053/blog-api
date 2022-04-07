@@ -19,8 +19,7 @@ import {
   NewSubscriberSwagger,
   ValidateEmailSwagger,
 } from './swagger.decorators';
-import { SubscribersService } from '../../subscribers/service/subscribers.service';
-import { SubscriberEntity } from '../external';
+import { SubscriberEntity, SubscribersService } from '../external';
 
 @Controller({ path: '/subscribers' })
 @UseInterceptors(SQLErrorsInterceptor, ClassSerializerInterceptor)
