@@ -1,20 +1,19 @@
 import {
-  BadRequestException,
   CallHandler,
   ExecutionContext,
   Injectable,
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { QueryFailedError } from 'typeorm';
+import { DuplicateUserException } from '../exceptions/DuplicateUserException';
 
 @Injectable()
 export class SQLErrorsInterceptor implements NestInterceptor {
   private logger = new Logger(this.constructor.name);
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const now = Date.now();
     return next.handle().pipe(
       catchError((err) => {
         if (
@@ -22,13 +21,9 @@ export class SQLErrorsInterceptor implements NestInterceptor {
           err.driverError.code === 'ER_DUP_ENTRY'
         ) {
           this.logger.debug(`Duplicate email error found`, err);
-          throw new BadRequestException(
-            'A user with that email already exists',
-          );
-        } else {
-          throw err;
+          throw new DuplicateUserException();
         }
-        return of(null);
+        throw err;
       }),
     );
   }
