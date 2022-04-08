@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SubscribersService } from './subscribers.service';
 import { Frequency, SubscriberEntity } from '../entity/subscriber.entity';
 import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import Mocked = jest.Mocked;
 
 describe('SubscribersService', () => {
@@ -13,7 +14,7 @@ describe('SubscribersService', () => {
       providers: [
         SubscribersService,
         {
-          provide: `${SubscriberEntity.name}Repository`,
+          provide: getRepositoryToken(SubscriberEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),

@@ -1,6 +1,5 @@
 import 'dotenv/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Frequency, SubscriberEntity } from '../src/modules/subscribers';
 import { Repository } from 'typeorm';
@@ -10,6 +9,7 @@ import {
   VERIFY_EMAIL_BAD_REQUESTS,
 } from './__stubs__';
 import { getApplication } from './base';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -17,7 +17,7 @@ describe('AppController (e2e)', () => {
 
   beforeAll(async () => {
     app = await getApplication();
-    repo = await app.resolve('SubscriberEntityRepository');
+    repo = await app.resolve(getRepositoryToken(SubscriberEntity));
   });
 
   afterAll(async () => {
