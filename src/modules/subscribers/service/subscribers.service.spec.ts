@@ -16,6 +16,9 @@ describe('SubscribersService', () => {
           provide: `${SubscriberEntity.name}Repository`,
           useValue: {
             find: jest.fn(),
+            findOne: jest.fn(),
+            insert: jest.fn(),
+            save: jest.fn(),
           },
         },
       ],
@@ -43,5 +46,39 @@ describe('SubscribersService', () => {
     subscriberRepo.find.mockResolvedValueOnce(expected);
 
     expect(subscriberService.getSubscribers()).resolves.toEqual(expected);
+  });
+
+  it('Adds a new subscriber', () => {
+    const expected = {
+      country: 'GB',
+      name: 'Phill',
+      email: 'example',
+      emailVerified: true,
+      frequency: Frequency.Daily,
+      subscriptionTime: new Date(),
+    };
+    subscriberRepo.findOne.mockResolvedValueOnce({
+      ...expected,
+      verificationCode: null,
+      id: 1,
+    });
+
+    expect(subscriberService.newSubscriber(expected)).resolves.toEqual(
+      expected,
+    );
+    expect(subscriberRepo.insert).toBeCalledWith([
+      expect.objectContaining(expected),
+    ]);
+  });
+
+  it('Verifies an email', async () => {
+    subscriberRepo.findOne.mockResolvedValueOnce({
+      email: 'example',
+      verificationCode: '123456',
+    } as SubscriberEntity);
+    await subscriberService.verifyEmail('example', '123456');
+    expect(subscriberRepo.save).toBeCalledWith([
+      expect.objectContaining({ emailVerified: true, verificationCode: null }),
+    ]);
   });
 });
